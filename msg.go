@@ -47,6 +47,10 @@ func (m *Msg) Size() int {
 	return m.msz
 }
 
+func (m *Msg) SetSize(msz int) {
+	m.msz = msz
+}
+
 func (m *Msg) OccurredAt() time.Time {
 	return m.occurredAt
 }

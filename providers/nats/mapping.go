@@ -9,10 +9,15 @@ import (
 )
 
 // newNatsMsgFromBrokerMsg creates a new nats.Msg from a broker.Msg.
-func newNatsMsgFromBrokerMsg(subject string, brokerMsg broker.Msg) *nats.Msg {
-	natsMsg := nats.NewMsg(subject)
+func newNatsMsgFromBrokerMsg(brokerMsg broker.Msg) *nats.Msg {
+	natsMsg := nats.NewMsg(brokerMsg.Subject)
 	natsMsg.Data = brokerMsg.Data
+
 	natsMsg.Header.Add(nats.MsgIdHdr, brokerMsg.ID)
+
+	if brokerMsg.OccurredAt().IsZero() {
+		brokerMsg.SetOccurredAt(time.Now().UTC())
+	}
 	natsMsg.Header.Add(broker.MSG_OCCURRED_AT, brokerMsg.OccurredAtToRFC3339())
 
 	return natsMsg
@@ -22,8 +27,10 @@ func newNatsMsgFromBrokerMsg(subject string, brokerMsg broker.Msg) *nats.Msg {
 func newBrokerMsgFromNatsMsg(natsMsg *nats.Msg) broker.Msg {
 	brokerMsg := broker.NewMsg(natsMsg.Header.Get(nats.MsgIdHdr), natsMsg.Subject, natsMsg.Data)
 	if err := brokerMsg.SetOccurredAtFromRFC3339(natsMsg.Header.Get(broker.MSG_OCCURRED_AT)); err != nil {
+		// set default time if error
 		brokerMsg.SetOccurredAt(time.Time{})
 	}
+	brokerMsg.SetSize(natsMsg.Size())
 
 	return brokerMsg
 }
