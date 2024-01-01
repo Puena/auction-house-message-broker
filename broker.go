@@ -15,10 +15,14 @@ func NewBroker(provider brokerProvider) *MessageBroker {
 	return &MessageBroker{provider: provider}
 }
 
-func (b *MessageBroker) PublishMsg(ctx context.Context, subject string, msg Msg, opts ...PublishOption) (PubAck, error) {
-	return b.provider.PublishMsg(ctx, subject, msg, opts...)
+// PublishMsg performs a synchronous publish to a stream and waits for ack from server
+// It accepts subject name (which must be bound to a stream) and nats.Message
+func (b *MessageBroker) PublishMsg(ctx context.Context, msg Msg, opts ...PublishOption) (PubAck, error) {
+	return b.provider.PublishMsg(ctx, msg, opts...)
 }
 
-func (b *MessageBroker) PublishMsgAsync(subject string, msg Msg, opts ...PublishOption) (PubAckFuturer, error) {
-	return b.provider.PublishMsgAsync(subject, msg, opts...)
+// PublishAsync performs an asynchronous publish to a stream and returns [PubAckFuture] interface
+// It accepts subject name (which must be bound to a stream) and message data
+func (b *MessageBroker) PublishMsgAsync(msg Msg, opts ...PublishOption) (PubAckFuturer, error) {
+	return b.provider.PublishMsgAsync(msg, opts...)
 }

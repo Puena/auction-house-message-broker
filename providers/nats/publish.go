@@ -8,7 +8,7 @@ import (
 )
 
 // Publish publishes a message to the nats jetstream broker synchronous.
-func (n *natsJetStream) Publish(ctx context.Context, subject string, msg broker.Msg, opts ...broker.PublishOption) (broker.PubAck, error) {
+func (n *natsJetStream) Publish(ctx context.Context, msg broker.Msg, opts ...broker.PublishOption) (broker.PubAck, error) {
 	options, err := broker.NewPublishOptions(opts...)
 	if err != nil {
 		return broker.PubAck{}, err
@@ -20,7 +20,7 @@ func (n *natsJetStream) Publish(ctx context.Context, subject string, msg broker.
 		natsOpts = append(natsOpts, jetstream.WithRetryAttempts(options.MsgRetry))
 	}
 
-	natsMsg := newNatsMsgFromBrokerMsg(subject, msg)
+	natsMsg := newNatsMsgFromBrokerMsg(msg)
 	ack, err := n.js.PublishMsg(ctx, natsMsg, natsOpts...)
 	if err != nil {
 		return broker.PubAck{}, err
@@ -30,7 +30,7 @@ func (n *natsJetStream) Publish(ctx context.Context, subject string, msg broker.
 }
 
 // PublishAsync publishes a message to the nats jetstream broker asynchronous.
-func (n *natsJetStream) PublishAsync(subject string, msg broker.Msg, opts ...broker.PublishOption) (broker.PubAckFuturer, error) {
+func (n *natsJetStream) PublishAsync(msg broker.Msg, opts ...broker.PublishOption) (broker.PubAckFuturer, error) {
 	options, err := broker.NewPublishOptions(opts...)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (n *natsJetStream) PublishAsync(subject string, msg broker.Msg, opts ...bro
 		natsOpts = append(natsOpts, jetstream.WithRetryAttempts(options.MsgRetry))
 	}
 
-	natsMsg := newNatsMsgFromBrokerMsg(subject, msg)
+	natsMsg := newNatsMsgFromBrokerMsg(msg)
 	ack, err := n.js.PublishMsgAsync(natsMsg, natsOpts...)
 	if err != nil {
 		return nil, err
