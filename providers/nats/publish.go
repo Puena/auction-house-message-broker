@@ -8,7 +8,7 @@ import (
 )
 
 // Publish publishes a message to the nats jetstream broker synchronous.
-func (n *NatsJetStream) Publish(ctx context.Context, subject string, msg broker.Msg, opts ...broker.PublishOption) (broker.PubAck, error) {
+func (n *natsJetStream) Publish(ctx context.Context, subject string, msg broker.Msg, opts ...broker.PublishOption) (broker.PubAck, error) {
 	options, err := broker.NewPublishOptions(opts...)
 	if err != nil {
 		return broker.PubAck{}, err
@@ -30,7 +30,7 @@ func (n *NatsJetStream) Publish(ctx context.Context, subject string, msg broker.
 }
 
 // PublishAsync publishes a message to the nats jetstream broker asynchronous.
-func (n *NatsJetStream) PublishAsync(subject string, msg broker.Msg, opts ...broker.PublishOption) (broker.PubAckFuturer, error) {
+func (n *natsJetStream) PublishAsync(subject string, msg broker.Msg, opts ...broker.PublishOption) (broker.PubAckFuturer, error) {
 	options, err := broker.NewPublishOptions(opts...)
 	if err != nil {
 		return nil, err

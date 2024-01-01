@@ -63,6 +63,6 @@ func (o *publishOptions) validate() error {
 }
 
 type Publisher interface {
-	PublishMsg(ctx context.Context, subject string, msg Msg, opts ...publishOptions) (PubAck, error)
-	PublishMsgAsync(ctx context.Context, subject string, msg Msg, opts ...PublishOption) (PubAckFuturer, error)
+	PublishMsg(ctx context.Context, subject string, msg Msg, opts ...PublishOption) (PubAck, error)
+	PublishMsgAsync(subject string, msg Msg, opts ...PublishOption) (PubAckFuturer, error)
 }
